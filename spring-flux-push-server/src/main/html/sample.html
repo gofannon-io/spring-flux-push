@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script src="jquery.min.js"></script>
+</head>
+<body>
+<h1>Watcher 2</h1>
+<div class="container"></div>
+<script src="sse.js"></script>
+<script>
+    window.onload = function () {
+        const source = new SSE("http://localhost:8080/weather");
+        source.addEventListener('message', function (e) {
+            if (e.data) {
+                //const payload = JSON.parse(e.data);
+                const payload = e.data;
+                $(".container").append('<p>' + payload.action + '</p>')
+            }});
+        source.stream();
+    };
+</script>
+</body>
+</html>
