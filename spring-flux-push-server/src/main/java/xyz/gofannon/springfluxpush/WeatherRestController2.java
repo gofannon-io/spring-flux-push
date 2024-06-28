@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -38,19 +37,10 @@ public class WeatherRestController2 {
 
 
     @GetMapping(value = "/weather2", produces = MediaType.APPLICATION_XML_VALUE)
-    public Flux<ServerSentEvent<Message>> subscribe() {
-        return keepAlive(Duration.ofSeconds(5), notificationFlux);
+    public Flux<ServerSentEvent<String>> subscribe() {
+        return notificationFlux;
     }
 
-    private <T> Flux keepAlive(Duration duration, Flux<T> data) {
-        Flux<ServerSentEvent<Message>> heartBeat = Flux.interval(duration)
-                .map(
-                        e -> ServerSentEvent.<Message>builder()
-                                .comment("keep alive for: ")
-                                .build())
-                .doFinally(signalType -> logger.info("Heartbeat closed"));
-        return Flux.merge(heartBeat, data);
-    }
 
     private ServerSentEvent<String> generateNotification() {
         return ServerSentEvent.<String>builder()
